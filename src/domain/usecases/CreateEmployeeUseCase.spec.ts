@@ -1,3 +1,4 @@
+import { createEmployeeRepositoryMock } from "../../helpers";
 import Employee from "../entities/Employee";
 import { InvalidAgeError } from "../error";
 import { EmployeeRepository } from "../repositories";
@@ -11,7 +12,7 @@ describe("CreateEmployeeUseCase", () => {
   const validEmployeeFixture = { name: "Jane Doe", age: 25, role: "seller" };
 
   beforeAll(() => {
-    mockEmployeeRepository = { create: jest.fn(), readOne: jest.fn(), readAll: jest.fn(),  update: jest.fn(), delete: jest.fn() };
+    mockEmployeeRepository = createEmployeeRepositoryMock();
     sut = new CreateEmployeeUseCase(mockEmployeeRepository);
   });
 
@@ -24,7 +25,8 @@ describe("CreateEmployeeUseCase", () => {
     const expectedEmployee =  new Employee(
         validEmployeeFixture.name,
         validEmployeeFixture.age,
-        validEmployeeFixture.role
+        validEmployeeFixture.role,
+        '123abc'
       )
     mockEmployeeRepository.create.mockResolvedValue(expectedEmployee)
      
