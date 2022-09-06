@@ -1,32 +1,10 @@
-import { NotFoundError } from "../../core/errors";
+import { DeleteEmployeeUseCase } from ".";
 import { createEmployeeRepositoryMock } from "../../helpers";
 import Employee from "../entities/Employee";
 import { EmployeeNotFound } from "../error";
 import { EmployeeRepository } from "../repositories";
-import { UseCase } from "./usecase.interface";
 
-type DeleteResponse = {
-  message: string;
-}
 
-export class DeleteEmployeeUseCase implements UseCase<string, DeleteResponse> {
-  constructor(private repository: EmployeeRepository) {}
-  
-  async execute(employeeId: string): Promise<DeleteResponse> {
-
-    const employee = await this.repository.readOne(employeeId);
-
-    if (!employee) {
-      throw new EmployeeNotFound();
-    }
-
-    const deleted = await this.repository.delete(employeeId);
-    if (deleted) {
-      return {message: 'Employee deleted with success'};
-    }
-    return {message: 'Employee not deleted'};
-  }
-}
 
 describe("DeleteEmployeeUseCase", () => {
   let mockEmployeeRepository: jest.Mocked<EmployeeRepository>;

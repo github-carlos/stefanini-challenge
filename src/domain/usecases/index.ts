@@ -3,3 +3,4 @@ export * from './CreateEmployeeUseCase';
 export * from './ReadOneEmployeeUseCase';
 export * from './ReadAllEmployeesUseCase';
 export * from './UpdateEmployeeUseCase';
+export * from './DeleteEmployeeUseCase';

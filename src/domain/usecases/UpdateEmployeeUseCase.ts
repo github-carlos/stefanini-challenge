@@ -1,5 +1,4 @@
 import { UseCase } from ".";
-import { NotFoundError } from "../../core/errors";
 import Employee from "../entities/Employee";
 import { EmployeeNotFound } from "../error";
 import { EmployeeRepository } from "../repositories";
