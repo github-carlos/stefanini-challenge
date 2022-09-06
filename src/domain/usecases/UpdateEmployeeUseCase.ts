@@ -1,6 +1,7 @@
 import { UseCase } from ".";
 import { NotFoundError } from "../../core/errors";
 import Employee from "../entities/Employee";
+import { EmployeeNotFound } from "../error";
 import { EmployeeRepository } from "../repositories";
 
 type UpdateEmployeeParams = {
@@ -15,7 +16,7 @@ export class UpdateEmployeeUseCase implements UseCase<UpdateEmployeeParams, Empl
     const employee = await this.repository.readOne(params.employeeId);
 
     if (!employee) {
-      throw new NotFoundError('Does not exist an Employee for given id');
+      throw new EmployeeNotFound();
     }
 
     const updatedData = {

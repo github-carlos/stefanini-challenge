@@ -1,10 +1,8 @@
 import { UpdateEmployeeUseCase } from ".";
-import { NotFoundError } from "../../core/errors";
 import { createEmployeeRepositoryMock } from "../../helpers";
 import Employee from "../entities/Employee";
-import { InvalidAgeError } from "../error";
+import { EmployeeNotFound, InvalidAgeError } from "../error";
 import { EmployeeRepository } from "../repositories";
-import { UseCase } from "./usecase.interface";
 
 describe("CreateEmployeeUseCase", () => {
   let sut: UpdateEmployeeUseCase;
@@ -18,10 +16,10 @@ describe("CreateEmployeeUseCase", () => {
     sut = new UpdateEmployeeUseCase(mockEmployeeRepository);
   });
 
-  test("should throw NotFoundError when id does not exist", async () => {
+  test("should throw EmployeeNotFound when id does not exist", async () => {
     const params = {employeeId: 'invalidId', data: {}};
     mockEmployeeRepository.readOne.mockResolvedValue(null);
-    await expect(sut.execute(params)).rejects.toThrow(NotFoundError);
+    await expect(sut.execute(params)).rejects.toThrow(EmployeeNotFound);
   });
 
   test("should call repository with correct args", async () => {
