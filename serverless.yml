@@ -1,0 +1,62 @@
+org: carloseduardo
+app: stefanini-challenge
+service: stefanini-challenge
+frameworkVersion: '3'
+
+custom:
+  tableName: 'employees-table-${sls:stage}'
+  dynamodb:
+    start:
+      migrate: true
+    stages:
+      - dev
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - Fn::GetAtt: [ EmployeesTable, Arn ]
+  environment:
+    USERS_TABLE: ${self:custom.tableName}
+
+functions:
+  api:
+    handler: handler.handler
+    events:
+      - httpApi: '*'
+
+resources:
+  Resources:
+    EmployeesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: employeeId
+            AttributeType: S
+          - AttributeName: name
+            AttributeType: S
+          - AttributeName: age
+            AttributeType: N
+          - AttributeName: role
+            AttributeType: S
+        KeySchema:
+          - AttributeName: employeeId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:custom.tableName}
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-dynamodb-local
+  - serverless-offline
