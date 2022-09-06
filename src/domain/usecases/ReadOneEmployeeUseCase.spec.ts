@@ -3,9 +3,6 @@ import { createEmployeeRepositoryMock } from "../../helpers";
 import Employee from "../entities/Employee";
 import { EmployeeNotFound } from "../error";
 import { EmployeeRepository } from "../repositories";
-import { UseCase } from "./usecase.interface";
-
-
 
 describe("ReadOneEmployeeUseCase", () => {
   let mockEmployeeRepository: jest.Mocked<EmployeeRepository>;
