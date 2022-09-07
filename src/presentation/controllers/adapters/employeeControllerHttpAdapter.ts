@@ -64,8 +64,13 @@ export class EmployeeControllerHttpAdapter implements EmployeeController<HttpReq
       return HttpErrorHandler.handle(err);
     }
   }
-  readAll(params: HttpRequest): Promise<HttpResponse> {
-    throw new Error("Method not implemented.");
+  async readAll(params: HttpRequest): Promise<HttpResponse> {
+    try {
+      const result = await this.readAllUseCase.execute();
+      return {body: result, status: 200};
+    } catch(err) {
+      return HttpErrorHandler.handle(err);
+    }
   }
   update(params: HttpRequest): Promise<HttpResponse> {
     throw new Error("Method not implemented.");
