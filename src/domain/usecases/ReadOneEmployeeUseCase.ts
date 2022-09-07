@@ -4,7 +4,7 @@ import { EmployeeNotFound } from "../error";
 import { EmployeeRepository } from "../repositories";
 
 export class ReadOneEmployeeUseCase implements UseCase<string, Employee> {
-  constructor(public repository: EmployeeRepository) {}
+  constructor(private repository: EmployeeRepository) {}
   async execute(employeeId: string): Promise<Employee> {
     const employee = await this.repository.readOne(employeeId);
 

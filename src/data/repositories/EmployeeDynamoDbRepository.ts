@@ -7,7 +7,7 @@ import { DataBaseError } from "../errors";
 export class EmployeeDynamoDbRepository implements EmployeeRepository {
   static readonly tableName = process.env.EMPLOYEE_TABLE || "";
 
-  get _tableName() {
+  private get _tableName() {
     return EmployeeDynamoDbRepository.tableName;
   }
 
