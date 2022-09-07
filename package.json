@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "jest"
+    "test": "jest --watch"
   },
   "dependencies": {
     "express": "^4.17.1",
     "serverless-http": "^2.7.0"
   },
   "devDependencies": {
+    "@types/aws-sdk": "^2.7.0",
     "@types/jest": "^29.0.0",
     "jest": "^28.0.2",
     "serverless-dynamodb-local": "^0.2.40",
