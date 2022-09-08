@@ -1,16 +1,10 @@
 import { EmployeeControllerHttpAdapter } from ".";
-import {
-  BadRequestError,
-  NotFoundError,
-  ServerError,
-} from "../../../core/errors";
 import { UuidGenerator } from "../../../data/datasource/uidGenerator";
 import { DataBaseError } from "../../../data/errors";
 import Employee from "../../../domain/entities/Employee";
 import {
   EmployeeNotFound,
   InvalidAgeError,
-  MissingParamError,
 } from "../../../domain/error";
 import {
   CreateEmployeeUseCase,

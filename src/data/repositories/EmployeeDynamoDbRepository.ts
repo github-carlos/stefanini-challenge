@@ -1,7 +1,6 @@
 import { DynamoDB } from "aws-sdk";
 import Employee from "../../domain/entities/Employee";
 import { EmployeeRepository } from "../../domain/repositories";
-import { CreateEmployeeParams } from "../../domain/usecases";
 import { DataBaseError } from "../errors";
 
 export class EmployeeDynamoDbRepository implements EmployeeRepository {
@@ -15,8 +14,6 @@ export class EmployeeDynamoDbRepository implements EmployeeRepository {
 
   async create(employeeData: Employee): Promise<void> {
     try {
-      console.log('employeeData', employeeData);
-      console.log('tableName', this._tableName);
       const result = await this.client
         .put({
           TableName: this._tableName,
@@ -24,9 +21,7 @@ export class EmployeeDynamoDbRepository implements EmployeeRepository {
           ReturnValues: "ALL_OLD",
         })
         .promise();
-      console.log('result', result);
     } catch (err) {
-      console.log('RepositoryError', err);
       throw new DataBaseError();
     }
   }
@@ -52,7 +47,6 @@ export class EmployeeDynamoDbRepository implements EmployeeRepository {
           TableName: this._tableName,
         })
         .promise();
-        console.log('Items', Items);
       return Items!.map((item) =>
         this.toEntity({
           name: item["name"],
@@ -62,7 +56,6 @@ export class EmployeeDynamoDbRepository implements EmployeeRepository {
         })
       );
     } catch(err) {
-      console.log('RepositoryError', err);
       throw new DataBaseError();
     }
   }
@@ -86,7 +79,6 @@ export class EmployeeDynamoDbRepository implements EmployeeRepository {
       }).promise();
       return data;
     } catch(err) {
-      console.log('RepositoryError', err);
       throw new DataBaseError();
     }
   }
@@ -98,7 +90,6 @@ export class EmployeeDynamoDbRepository implements EmployeeRepository {
           employeeId
         }
       }).promise();
-      console.log('result db', result);
       return true;
     } catch(err) {
       throw new DataBaseError();

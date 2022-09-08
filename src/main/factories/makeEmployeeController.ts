@@ -1,6 +1,6 @@
 import AWS, { DynamoDB } from "aws-sdk";
 import { EmployeeDynamoDbRepository } from "../../data/repositories";
-import { UuidGeneratorAdapter } from "../../datasources/uuidGeneratorAdapter";
+import { UuidGeneratorAdapter } from "../../infra/datasources/uuidGeneratorAdapter";
 import {
   CreateEmployeeUseCase,
   DeleteEmployeeUseCase,

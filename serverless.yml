@@ -1,5 +1,5 @@
 org: carloseduardo
-app: stefanini-challenge
+app: aws-function-test
 service: stefanini-challenge
 frameworkVersion: '3'
 

@@ -1,7 +1,6 @@
 import { UseCase } from ".";
 import Employee from "../entities/Employee";
 import { EmployeeRepository } from "../repositories";
-import { v4 as uuidv4 } from 'uuid';
 import { UuidGenerator } from "../../data/datasource/uidGenerator";
 
 export type CreateEmployeeParams = {

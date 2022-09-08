@@ -162,7 +162,12 @@ describe("EmployeeDynamoDbRepository", () => {
         Key: {
           employeeId
         },
-        UpdateExpression: 'set name = :name, set age = :age, set role = :role',
+        UpdateExpression: 'set #name = :name, #age = :age, #role = :role',
+        ExpressionAttributeNames: {
+          '#name': 'name',
+          '#age': 'age',
+          '#role': 'role'
+        },
         ExpressionAttributeValues: {
           ':name': newEmployee.name,
           ':age': newEmployee.age,

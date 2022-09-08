@@ -1,6 +1,4 @@
-import { ConfigurationServicePlaceholders } from "aws-sdk/lib/config_service_placeholders";
 import { HttpErrorHandler } from ".";
-import { BadRequestError, NotFoundError } from "../../../core/errors";
 import { MissingParamError, ParamTypeError } from "../../../domain/error";
 import {
   CreateEmployeeUseCase,
