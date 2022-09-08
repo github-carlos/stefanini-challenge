@@ -1,5 +1,5 @@
 
-# **Desafio Stefafnini**
+# **Desafio Stefanini**
 O desafio consiste em criar um serviço que rode no AWS Lambda e seja possível adicionar, ler, atualizar e remover um funcionário.
 
 ## Tecnologias Utilizadas
