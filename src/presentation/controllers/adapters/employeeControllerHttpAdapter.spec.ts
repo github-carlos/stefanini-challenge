@@ -4,6 +4,7 @@ import {
   NotFoundError,
   ServerError,
 } from "../../../core/errors";
+import { UuidGenerator } from "../../../data/datasource/uidGenerator";
 import { DataBaseError } from "../../../data/errors";
 import Employee from "../../../domain/entities/Employee";
 import {
@@ -22,17 +23,19 @@ import { createEmployeeRepositoryMock } from "../../../helpers";
 import { EmployeeController, HttpRequest, HttpResponse } from "../ports";
 
 describe("EmployeeControllerHttpAdapter", () => {
+  let mockUuidGenerator: jest.Mocked<UuidGenerator>;
   let mockCreateEmployeeUseCase: jest.SpyInstance<any>;
   let mockReadOneEmployeeUseCase: jest.SpyInstance<any>;
   let mockReadAllEmployeeUseCase: jest.SpyInstance<any>;
   let updateEmployeeUseCase: UpdateEmployeeUseCase;
-  let deleteEmployeeUseCase: DeleteEmployeeUseCase;
+  let mockDeleteEmployeeUseCase: jest.SpyInstance<any>;
 
   let sut: EmployeeController<HttpRequest, HttpResponse>;
 
   beforeAll(() => {
+    mockUuidGenerator = {generate: jest.fn()};
     const createEmployeeUseCase = new CreateEmployeeUseCase(
-      createEmployeeRepositoryMock()
+      createEmployeeRepositoryMock(), mockUuidGenerator
     );
     mockCreateEmployeeUseCase = jest.spyOn(createEmployeeUseCase, "execute");
     const readOneEmployeeUseCase = new ReadOneEmployeeUseCase(
@@ -48,9 +51,10 @@ describe("EmployeeControllerHttpAdapter", () => {
     updateEmployeeUseCase = new UpdateEmployeeUseCase(
       createEmployeeRepositoryMock()
     );
-    deleteEmployeeUseCase = new DeleteEmployeeUseCase(
+    const deleteEmployeeUseCase = new DeleteEmployeeUseCase(
       createEmployeeRepositoryMock()
     );
+    mockDeleteEmployeeUseCase = jest.spyOn(deleteEmployeeUseCase, "execute");
 
     sut = new EmployeeControllerHttpAdapter({
       createUseCase: createEmployeeUseCase,
@@ -196,6 +200,32 @@ describe("EmployeeControllerHttpAdapter", () => {
     test('should return with status 500 when DataBase fails', async () => {
       mockReadAllEmployeeUseCase.mockRejectedValue(new DataBaseError());
       const result = await sut.readAll(request);
+      expect(result.status).toBe(500);
+    });
+  });
+
+  describe("#delete", () => {
+    const request: HttpRequest = {
+      body: {},
+      params: {employeeId: "123abc"},
+    };
+
+    test('should call DeleteEmployeeUseCase with correct params', async () => {
+      mockDeleteEmployeeUseCase.mockResolvedValue(true);
+      await sut.delete(request);
+      expect(mockDeleteEmployeeUseCase).toHaveBeenCalledTimes(1);
+    });
+
+    test('should return body with an array and status 200', async () => {
+      mockDeleteEmployeeUseCase.mockResolvedValue(true);
+      const result = await sut.delete(request);
+      expect(result.status).toBe(200);
+      expect(result.body).toHaveProperty('message', 'ok');
+    });
+
+    test('should return with status 500 when DataBase fails', async () => {
+      mockDeleteEmployeeUseCase.mockRejectedValue(new DataBaseError());
+      const result = await sut.delete(request);
       expect(result.status).toBe(500);
     });
   });

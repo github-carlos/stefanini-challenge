@@ -3,6 +3,7 @@ import { HttpResponse } from "../ports";
 
 export class HttpErrorHandler {
   static handle(error: Error): HttpResponse {
+    console.log('Error log', error);
     let status = 500;
     let message = error.message;
     if (error instanceof BadRequestError) {

@@ -13,8 +13,10 @@ export class EmployeeDynamoDbRepository implements EmployeeRepository {
 
   constructor(private readonly client: DynamoDB.DocumentClient) {}
 
-  async create(employeeData: CreateEmployeeParams): Promise<Employee> {
+  async create(employeeData: Employee): Promise<void> {
     try {
+      console.log('employeeData', employeeData);
+      console.log('tableName', this._tableName);
       const result = await this.client
         .put({
           TableName: this._tableName,
@@ -22,9 +24,9 @@ export class EmployeeDynamoDbRepository implements EmployeeRepository {
           ReturnValues: "ALL_OLD",
         })
         .promise();
-      // console.log('result', result);
-      return this.toEntity(result.$response.data! as any);
+      console.log('result', result);
     } catch (err) {
+      console.log('RepositoryError', err);
       throw new DataBaseError();
     }
   }
@@ -40,6 +42,7 @@ export class EmployeeDynamoDbRepository implements EmployeeRepository {
         .promise();
       return Item ? this.toEntity(Item! as any) : null;
     } catch (err) {
+      console.log('RepositoryError', err);
       throw new DataBaseError();
     }
   }
@@ -50,6 +53,7 @@ export class EmployeeDynamoDbRepository implements EmployeeRepository {
           TableName: this._tableName,
         })
         .promise();
+        console.log('Items', Items);
       return Items!.map((item) =>
         this.toEntity({
           name: item["name"],
@@ -59,6 +63,7 @@ export class EmployeeDynamoDbRepository implements EmployeeRepository {
         })
       );
     } catch(err) {
+      console.log('RepositoryError', err);
       throw new DataBaseError();
     }
   }
@@ -66,8 +71,19 @@ export class EmployeeDynamoDbRepository implements EmployeeRepository {
   update(employeeId: string, data: any): Promise<Employee> {
     throw new Error("Method not implemented.");
   }
-  delete(employeeId: string): Promise<boolean> {
-    throw new Error("Method not implemented.");
+  async delete(employeeId: string): Promise<boolean> {
+    try {
+      await this.client.delete({
+        TableName: this._tableName,
+        Key: {
+          employeeId
+        }
+      }).promise();
+      return true;
+    } catch(err) {
+      throw new DataBaseError();
+    }
+
   }
 
   private toEntity(data: {

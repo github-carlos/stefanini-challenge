@@ -1,8 +1,7 @@
 import Employee from "../entities/Employee";
-import { CreateEmployeeParams } from "../usecases/CreateEmployeeUseCase";
 
 export interface EmployeeRepository {
-  create(employeeData: CreateEmployeeParams): Promise<Employee>;
+  create(employeeData: Employee): Promise<void>;
   readOne(employeeId: string): Promise<Employee|null>;
   readAll(): Promise<Array<Employee>>;
   update(employeeId: string, data: any): Promise<Employee>;

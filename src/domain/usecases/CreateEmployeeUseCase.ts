@@ -1,6 +1,8 @@
 import { UseCase } from ".";
 import Employee from "../entities/Employee";
 import { EmployeeRepository } from "../repositories";
+import { v4 as uuidv4 } from 'uuid';
+import { UuidGenerator } from "../../data/datasource/uidGenerator";
 
 export type CreateEmployeeParams = {
   name: string;
@@ -11,11 +13,12 @@ export type CreateEmployeeParams = {
 export class CreateEmployeeUseCase
   implements UseCase<CreateEmployeeParams, Employee>
 {
-  constructor(private repository: EmployeeRepository) {}
+  constructor(private repository: EmployeeRepository, private uuidGenerator: UuidGenerator) {}
 
   async execute(params: CreateEmployeeParams): Promise<Employee> {
     Employee.validate(params);
-    const newEmployee = await this.repository.create(params);
-    return newEmployee;
+    const employee = new Employee(params.name, params.age, params.role, this.uuidGenerator.generate());
+    await this.repository.create(employee);
+    return employee;
   }
 }

@@ -30,21 +30,10 @@ describe("EmployeeDynamoDbRepository", () => {
   });
 
   describe("#Create", () => {
-    const employeeCreateFixture = { name: "Jane Doe", age: 25, role: "seller" };
+    const employeeCreateFixture = { name: "Jane Doe", age: 25, role: "seller", employeeId: '123abc'};
     function mockValidReturn() {
       return mockDynamoDbClient.put.mockReturnValue({
-        promise: async () => {
-          return {
-            $response: {
-              data: {
-                name: employeeCreateFixture.name,
-                age: employeeCreateFixture.age,
-                role: employeeCreateFixture.role,
-                employeeId: "123abc",
-              },
-            },
-          };
-        },
+        promise: async () => {},
       });
     }
     test("should call put method with correct params", async () => {
@@ -69,11 +58,9 @@ describe("EmployeeDynamoDbRepository", () => {
       );
     });
 
-    test("should return Employee with id when everything succeeds", async () => {
+    test("should not throw when everything succeeds", async () => {
       mockValidReturn();
-      const result = await sut.create(employeeCreateFixture);
-
-      expect(result).toHaveProperty("employeeId");
+      await expect(sut.create(employeeCreateFixture)).resolves.not.toThrow();
     });
   });
 
@@ -139,6 +126,26 @@ describe("EmployeeDynamoDbRepository", () => {
         throw new Error();
       }});
       await expect(sut.readAll()).rejects.toThrow(DataBaseError);
+    });
+  });
+
+  describe("Delete", () => {
+    const employeeId = "123abc";
+    test("should call delete with correct params", async() => {
+      mockDynamoDbClient.delete.mockReturnValue({promise: async () => {}});
+      await sut.delete(employeeId);
+      expect(mockDynamoDbClient.delete).toHaveBeenCalledWith({
+        TableName: EmployeeDynamoDbRepository.tableName,
+        Key: {
+          employeeId
+        }
+      })
+    });
+    test("should throw DataBaseError when dynamodb client throws", async () => {
+      mockDynamoDbClient.delete.mockReturnValue({promise: async () => {
+        throw new Error();
+      }})
+      await expect(sut.delete(employeeId)).rejects.toThrow(DataBaseError);
     });
   });
 });

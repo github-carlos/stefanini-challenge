@@ -1,3 +1,4 @@
+import { ConfigurationServicePlaceholders } from "aws-sdk/lib/config_service_placeholders";
 import { HttpErrorHandler } from ".";
 import { BadRequestError, NotFoundError } from "../../../core/errors";
 import { MissingParamError, ParamTypeError } from "../../../domain/error";
@@ -75,8 +76,14 @@ export class EmployeeControllerHttpAdapter implements EmployeeController<HttpReq
   update(params: HttpRequest): Promise<HttpResponse> {
     throw new Error("Method not implemented.");
   }
-  delete(params: HttpRequest): Promise<HttpResponse> {
-    throw new Error("Method not implemented.");
+  async delete(params: HttpRequest): Promise<HttpResponse> {
+    try {
+      const employeeId = params.params['employeeId'];
+      const result = await this.deleteUseCase.execute(employeeId);
+      return {body: {message: 'ok'}, status: 200};
+    } catch(err) {
+      return HttpErrorHandler.handle(err);
+    }
   }
 
   private validateRequiredFields(data: any, requiredFields: Array<string>): void {
@@ -85,7 +92,7 @@ export class EmployeeControllerHttpAdapter implements EmployeeController<HttpReq
     requiredFields = requiredFields || [];
 
     for (const field of requiredFields) {
-      if (!data[field]) {
+      if (!data[field] && data[field] !== 0) {
         throw new MissingParamError(field);
       }
     }

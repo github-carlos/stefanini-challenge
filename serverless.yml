@@ -4,7 +4,7 @@ service: stefanini-challenge
 frameworkVersion: '3'
 
 custom:
-  tableName: 'employees-table-${sls:stage}'
+  tableName: 'employees-table'
   dynamodb:
     start:
       migrate: true
@@ -28,7 +28,7 @@ provider:
           Resource:
             - Fn::GetAtt: [ EmployeesTable, Arn ]
   environment:
-    USERS_TABLE: ${self:custom.tableName}
+    EMPLOYEE_TABLE: ${self:custom.tableName}
 
 functions:
   api:
@@ -43,12 +43,6 @@ resources:
       Properties:
         AttributeDefinitions:
           - AttributeName: employeeId
-            AttributeType: S
-          - AttributeName: name
-            AttributeType: S
-          - AttributeName: age
-            AttributeType: N
-          - AttributeName: role
             AttributeType: S
         KeySchema:
           - AttributeName: employeeId
