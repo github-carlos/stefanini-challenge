@@ -102,7 +102,6 @@ var EmployeeDynamoDbRepository = /** @class */ (function () {
                         return [2 /*return*/, Item ? this.toEntity(Item) : null];
                     case 2:
                         err_2 = _a.sent();
-                        console.log('RepositoryError', err_2);
                         throw new errors_1.DataBaseError();
                     case 3: return [2 /*return*/];
                 }
@@ -143,11 +142,42 @@ var EmployeeDynamoDbRepository = /** @class */ (function () {
         });
     };
     EmployeeDynamoDbRepository.prototype.update = function (employeeId, data) {
-        throw new Error("Method not implemented.");
+        return __awaiter(this, void 0, void 0, function () {
+            var result, err_4;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.client.update({
+                                TableName: this._tableName,
+                                Key: { employeeId: employeeId },
+                                UpdateExpression: 'set #name = :name, #age = :age, #role = :role',
+                                ExpressionAttributeNames: {
+                                    '#name': 'name',
+                                    '#age': 'age',
+                                    '#role': 'role'
+                                },
+                                ExpressionAttributeValues: {
+                                    ':name': data.name,
+                                    ':age': data.age,
+                                    ':role': data.role
+                                }
+                            }).promise()];
+                    case 1:
+                        result = _a.sent();
+                        return [2 /*return*/, data];
+                    case 2:
+                        err_4 = _a.sent();
+                        console.log('RepositoryError', err_4);
+                        throw new errors_1.DataBaseError();
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
     };
     EmployeeDynamoDbRepository.prototype["delete"] = function (employeeId) {
         return __awaiter(this, void 0, void 0, function () {
-            var err_4;
+            var result, err_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -159,10 +189,11 @@ var EmployeeDynamoDbRepository = /** @class */ (function () {
                                 }
                             }).promise()];
                     case 1:
-                        _a.sent();
+                        result = _a.sent();
+                        console.log('result db', result);
                         return [2 /*return*/, true];
                     case 2:
-                        err_4 = _a.sent();
+                        err_5 = _a.sent();
                         throw new errors_1.DataBaseError();
                     case 3: return [2 /*return*/];
                 }

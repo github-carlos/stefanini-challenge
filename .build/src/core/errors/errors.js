@@ -18,9 +18,11 @@ exports.__esModule = true;
 exports.NotFoundError = exports.ServerError = exports.BadRequestError = void 0;
 var BadRequestError = /** @class */ (function (_super) {
     __extends(BadRequestError, _super);
-    function BadRequestError(message) {
+    function BadRequestError(message, name) {
+        if (name === void 0) { name = 'BadRequestError'; }
         var _this = _super.call(this) || this;
         _this.message = message;
+        _this.name = name;
         return _this;
     }
     return BadRequestError;
@@ -31,6 +33,7 @@ var ServerError = /** @class */ (function (_super) {
     function ServerError() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.message = 'Internal Server Error';
+        _this.name = 'ServerError';
         return _this;
     }
     return ServerError;
@@ -38,9 +41,11 @@ var ServerError = /** @class */ (function (_super) {
 exports.ServerError = ServerError;
 var NotFoundError = /** @class */ (function (_super) {
     __extends(NotFoundError, _super);
-    function NotFoundError(message) {
+    function NotFoundError(message, name) {
+        if (name === void 0) { name = 'NotFoundError'; }
         var _this = _super.call(this) || this;
         _this.message = message;
+        _this.name = name;
         return _this;
     }
     return NotFoundError;

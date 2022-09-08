@@ -42,7 +42,6 @@ export class EmployeeDynamoDbRepository implements EmployeeRepository {
         .promise();
       return Item ? this.toEntity(Item! as any) : null;
     } catch (err) {
-      console.log('RepositoryError', err);
       throw new DataBaseError();
     }
   }
@@ -68,17 +67,38 @@ export class EmployeeDynamoDbRepository implements EmployeeRepository {
     }
   }
 
-  update(employeeId: string, data: any): Promise<Employee> {
-    throw new Error("Method not implemented.");
+  async update(employeeId: string, data: Employee): Promise<Employee> {
+    try {
+      const result = await this.client.update({
+        TableName: this._tableName,
+        Key: { employeeId },
+        UpdateExpression: 'set #name = :name, #age = :age, #role = :role',
+        ExpressionAttributeNames: {
+          '#name': 'name',
+          '#age': 'age',
+          '#role': 'role'
+        },
+        ExpressionAttributeValues: {
+          ':name': data.name,
+          ':age': data.age,
+          ':role': data.role
+        }
+      }).promise();
+      return data;
+    } catch(err) {
+      console.log('RepositoryError', err);
+      throw new DataBaseError();
+    }
   }
   async delete(employeeId: string): Promise<boolean> {
     try {
-      await this.client.delete({
+      const result = await this.client.delete({
         TableName: this._tableName,
         Key: {
           employeeId
         }
       }).promise();
+      console.log('result db', result);
       return true;
     } catch(err) {
       throw new DataBaseError();

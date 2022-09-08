@@ -12,5 +12,6 @@ function employeeRoutes(app) {
     employeesRouter.get('/employee', (0, adapters_1.adaptRoute)(employeeController.readAll.bind(employeeController)));
     employeesRouter.get('/employee/:employeeId', (0, adapters_1.adaptRoute)(employeeController.readOne.bind(employeeController)));
     employeesRouter["delete"]('/employee/:employeeId', (0, adapters_1.adaptRoute)(employeeController["delete"].bind(employeeController)));
+    employeesRouter.put('/employee/:employeeId', (0, adapters_1.adaptRoute)(employeeController.update.bind(employeeController)));
 }
 exports.employeeRoutes = employeeRoutes;

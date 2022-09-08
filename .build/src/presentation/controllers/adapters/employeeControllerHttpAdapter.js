@@ -54,15 +54,15 @@ var EmployeeControllerHttpAdapter = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        this.validateRequiredFields(params.body, ['name', 'age', 'role']);
-                        if (typeof params.body['name'] !== 'string') {
-                            throw new error_1.ParamTypeError('name', 'string', typeof params.body['name']);
+                        this.validateRequiredFields(params.body, ["name", "age", "role"]);
+                        if (typeof params.body["name"] !== "string") {
+                            throw new error_1.ParamTypeError("name", "string", typeof params.body["name"]);
                         }
-                        if (typeof params.body['age'] !== 'number') {
-                            throw new error_1.ParamTypeError('age', 'number', typeof params.body['age']);
+                        if (typeof params.body["age"] !== "number") {
+                            throw new error_1.ParamTypeError("age", "number", typeof params.body["age"]);
                         }
-                        if (typeof params.body['role'] !== 'string') {
-                            throw new error_1.ParamTypeError('role', 'string', typeof params.body['role']);
+                        if (typeof params.body["role"] !== "string") {
+                            throw new error_1.ParamTypeError("role", "string", typeof params.body["role"]);
                         }
                         createUseCaseDTO = {
                             name: params.body.name,
@@ -88,8 +88,8 @@ var EmployeeControllerHttpAdapter = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        this.validateRequiredFields(params.params, ['employeeId']);
-                        employeeId = params.params['employeeId'];
+                        this.validateRequiredFields(params.params, ["employeeId"]);
+                        employeeId = params.params["employeeId"];
                         return [4 /*yield*/, this.readOneUseCase.execute(employeeId)];
                     case 1:
                         result = _a.sent();
@@ -122,23 +122,45 @@ var EmployeeControllerHttpAdapter = /** @class */ (function () {
         });
     };
     EmployeeControllerHttpAdapter.prototype.update = function (params) {
-        throw new Error("Method not implemented.");
-    };
-    EmployeeControllerHttpAdapter.prototype["delete"] = function (params) {
         return __awaiter(this, void 0, void 0, function () {
             var employeeId, result, err_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        employeeId = params.params['employeeId'];
-                        return [4 /*yield*/, this.deleteUseCase.execute(employeeId)];
+                        this.validateRequiredFields(params.params, ["employeeId"]);
+                        employeeId = params.params["employeeId"];
+                        return [4 /*yield*/, this.updateUseCase.execute({
+                                employeeId: employeeId,
+                                data: params.body
+                            })];
                     case 1:
                         result = _a.sent();
-                        return [2 /*return*/, { body: { message: 'ok' }, status: 200 }];
+                        return [2 /*return*/, { body: result, status: 200 }];
                     case 2:
                         err_4 = _a.sent();
                         return [2 /*return*/, _1.HttpErrorHandler.handle(err_4)];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EmployeeControllerHttpAdapter.prototype["delete"] = function (params) {
+        return __awaiter(this, void 0, void 0, function () {
+            var employeeId, result, err_5;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        this.validateRequiredFields(params.params, ["employeeId"]);
+                        employeeId = params.params["employeeId"];
+                        return [4 /*yield*/, this.deleteUseCase.execute(employeeId)];
+                    case 1:
+                        result = _a.sent();
+                        return [2 /*return*/, { body: { message: "ok" }, status: 200 }];
+                    case 2:
+                        err_5 = _a.sent();
+                        return [2 /*return*/, _1.HttpErrorHandler.handle(err_5)];
                     case 3: return [2 /*return*/];
                 }
             });

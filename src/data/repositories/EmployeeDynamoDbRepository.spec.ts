@@ -148,4 +148,33 @@ describe("EmployeeDynamoDbRepository", () => {
       await expect(sut.delete(employeeId)).rejects.toThrow(DataBaseError);
     });
   });
+
+  describe("Update", () => {
+    const employeeId = "123abc";
+    const newEmployee = new Employee('Carlos Eduardo', 25, 'programmer', '123abc');
+
+
+    test("should call update with correct params", async() => {
+      mockDynamoDbClient.update.mockReturnValue({promise: async () => {}});
+      await sut.update(employeeId, newEmployee);
+      expect(mockDynamoDbClient.update).toHaveBeenCalledWith({
+        TableName: EmployeeDynamoDbRepository.tableName,
+        Key: {
+          employeeId
+        },
+        UpdateExpression: 'set name = :name, set age = :age, set role = :role',
+        ExpressionAttributeValues: {
+          ':name': newEmployee.name,
+          ':age': newEmployee.age,
+          ':role': newEmployee.role
+        }
+      })
+    });
+    test("should throw DataBaseError when dynamodb client throws", async () => {
+      mockDynamoDbClient.update.mockReturnValue({promise: async () => {
+        throw new Error();
+      }})
+      await expect(sut.update(employeeId, newEmployee)).rejects.toThrow(DataBaseError);
+    });
+  });
 });

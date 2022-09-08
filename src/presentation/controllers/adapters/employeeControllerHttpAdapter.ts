@@ -2,7 +2,13 @@ import { ConfigurationServicePlaceholders } from "aws-sdk/lib/config_service_pla
 import { HttpErrorHandler } from ".";
 import { BadRequestError, NotFoundError } from "../../../core/errors";
 import { MissingParamError, ParamTypeError } from "../../../domain/error";
-import { CreateEmployeeUseCase, DeleteEmployeeUseCase, ReadAllEmployeeUseCase, ReadOneEmployeeUseCase, UpdateEmployeeUseCase } from "../../../domain/usecases";
+import {
+  CreateEmployeeUseCase,
+  DeleteEmployeeUseCase,
+  ReadAllEmployeeUseCase,
+  ReadOneEmployeeUseCase,
+  UpdateEmployeeUseCase,
+} from "../../../domain/usecases";
 import { EmployeeController, HttpRequest, HttpResponse } from "../ports";
 
 type ParamsControllerHttpAdapter = {
@@ -11,10 +17,11 @@ type ParamsControllerHttpAdapter = {
   readAllUseCase: ReadAllEmployeeUseCase;
   updateUseCase: UpdateEmployeeUseCase;
   deleteUseCase: DeleteEmployeeUseCase;
-}
+};
 
-export class EmployeeControllerHttpAdapter implements EmployeeController<HttpRequest, HttpResponse> {
-
+export class EmployeeControllerHttpAdapter
+  implements EmployeeController<HttpRequest, HttpResponse>
+{
   private createUseCase: CreateEmployeeUseCase;
   private readOneUseCase: ReadOneEmployeeUseCase;
   private readAllUseCase: ReadAllEmployeeUseCase;
@@ -31,63 +38,77 @@ export class EmployeeControllerHttpAdapter implements EmployeeController<HttpReq
 
   async create(params: HttpRequest): Promise<HttpResponse> {
     try {
+      this.validateRequiredFields(params.body, ["name", "age", "role"]);
 
-      this.validateRequiredFields(params.body, ['name', 'age', 'role']);
-
-      if (typeof params.body['name'] !== 'string') {
-        throw new ParamTypeError('name', 'string', typeof params.body['name']);
+      if (typeof params.body["name"] !== "string") {
+        throw new ParamTypeError("name", "string", typeof params.body["name"]);
       }
-      if (typeof params.body['age'] !== 'number') {
-        throw new ParamTypeError('age', 'number', typeof params.body['age']);
+      if (typeof params.body["age"] !== "number") {
+        throw new ParamTypeError("age", "number", typeof params.body["age"]);
       }
-      if (typeof params.body['role'] !== 'string') {
-        throw new ParamTypeError('role', 'string', typeof params.body['role']);
+      if (typeof params.body["role"] !== "string") {
+        throw new ParamTypeError("role", "string", typeof params.body["role"]);
       }
 
       const createUseCaseDTO = {
         name: params.body.name,
         age: params.body.age,
         role: params.body.role,
-      }
+      };
       const result = await this.createUseCase.execute(createUseCaseDTO);
-      return {body: result, status: 200};
-    } catch(err) {
+      return { body: result, status: 200 };
+    } catch (err) {
       return HttpErrorHandler.handle(err);
     }
   }
   async readOne(params: HttpRequest): Promise<HttpResponse> {
     try {
-      this.validateRequiredFields(params.params, ['employeeId']);
-      const employeeId = params.params['employeeId'];
-      const result = await this.readOneUseCase.execute(employeeId)
-      return {body: result, status: 200};
-    } catch(err) {
+      this.validateRequiredFields(params.params, ["employeeId"]);
+      const employeeId = params.params["employeeId"];
+      const result = await this.readOneUseCase.execute(employeeId);
+      return { body: result, status: 200 };
+    } catch (err) {
       return HttpErrorHandler.handle(err);
     }
   }
   async readAll(params: HttpRequest): Promise<HttpResponse> {
     try {
       const result = await this.readAllUseCase.execute();
-      return {body: result, status: 200};
-    } catch(err) {
+      return { body: result, status: 200 };
+    } catch (err) {
       return HttpErrorHandler.handle(err);
     }
   }
-  update(params: HttpRequest): Promise<HttpResponse> {
-    throw new Error("Method not implemented.");
+  async update(params: HttpRequest): Promise<HttpResponse> {
+    try {
+      this.validateRequiredFields(params.params, ["employeeId"]);
+      const employeeId = params.params["employeeId"];
+
+      const result = await this.updateUseCase.execute({
+        employeeId,
+        data: params.body,
+      });
+      return { body: result, status: 200 };
+    } catch (err) {
+      return HttpErrorHandler.handle(err);
+    }
   }
+
   async delete(params: HttpRequest): Promise<HttpResponse> {
     try {
-      const employeeId = params.params['employeeId'];
+      this.validateRequiredFields(params.params, ["employeeId"]);
+      const employeeId = params.params["employeeId"];
       const result = await this.deleteUseCase.execute(employeeId);
-      return {body: {message: 'ok'}, status: 200};
-    } catch(err) {
+      return { body: { message: "ok" }, status: 200 };
+    } catch (err) {
       return HttpErrorHandler.handle(err);
     }
   }
 
-  private validateRequiredFields(data: any, requiredFields: Array<string>): void {
-
+  private validateRequiredFields(
+    data: any,
+    requiredFields: Array<string>
+  ): void {
     data = data || {};
     requiredFields = requiredFields || [];
 

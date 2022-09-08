@@ -3,6 +3,11 @@ export type HttpRequest = {
   body: any
 }
 
+export interface HttpError {
+  message: string;
+  status: number;
+}
+
 export type HttpResponse = {
   status: number,
   body: any;

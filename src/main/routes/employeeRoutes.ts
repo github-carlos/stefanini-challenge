@@ -9,4 +9,5 @@ export function employeeRoutes (app: Express): void {
   employeesRouter.get('/employee', adaptRoute(employeeController.readAll.bind(employeeController)));
   employeesRouter.get('/employee/:employeeId', adaptRoute(employeeController.readOne.bind(employeeController)));
   employeesRouter.delete('/employee/:employeeId', adaptRoute(employeeController.delete.bind(employeeController)));
+  employeesRouter.put('/employee/:employeeId', adaptRoute(employeeController.update.bind(employeeController)));
 }

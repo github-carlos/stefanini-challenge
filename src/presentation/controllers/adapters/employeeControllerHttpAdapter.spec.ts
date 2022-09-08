@@ -27,7 +27,7 @@ describe("EmployeeControllerHttpAdapter", () => {
   let mockCreateEmployeeUseCase: jest.SpyInstance<any>;
   let mockReadOneEmployeeUseCase: jest.SpyInstance<any>;
   let mockReadAllEmployeeUseCase: jest.SpyInstance<any>;
-  let updateEmployeeUseCase: UpdateEmployeeUseCase;
+  let mockUpdateEmployeeUseCase: jest.SpyInstance<any>;
   let mockDeleteEmployeeUseCase: jest.SpyInstance<any>;
 
   let sut: EmployeeController<HttpRequest, HttpResponse>;
@@ -48,9 +48,11 @@ describe("EmployeeControllerHttpAdapter", () => {
     );
     mockReadAllEmployeeUseCase = jest.spyOn(readAllEmployeeUseCase, "execute");
 
-    updateEmployeeUseCase = new UpdateEmployeeUseCase(
+    const updateEmployeeUseCase = new UpdateEmployeeUseCase(
       createEmployeeRepositoryMock()
     );
+    mockUpdateEmployeeUseCase = jest.spyOn(updateEmployeeUseCase, "execute");
+
     const deleteEmployeeUseCase = new DeleteEmployeeUseCase(
       createEmployeeRepositoryMock()
     );
@@ -204,6 +206,43 @@ describe("EmployeeControllerHttpAdapter", () => {
     });
   });
 
+  describe("#update", () => {
+    const request = {
+      params: {employeeId: '123abc'},
+      body: {
+        name: 'Carlos Eduardo'
+      }
+    }
+    const newEmployee = new Employee('Carlos Eduardo', 25, 'Programmer', '123abc');
+    
+    test('should call UpdateEmployeeUseCase with correct params', async () => {
+      mockUpdateEmployeeUseCase.mockResolvedValue(newEmployee);
+      await sut.update(request);
+      expect(mockUpdateEmployeeUseCase).toHaveBeenCalledWith({employeeId: request.params.employeeId, data: request.body});
+    });
+
+    test('should return body with with new data and status 200 when succeeds', async () => {
+      mockUpdateEmployeeUseCase.mockResolvedValue(newEmployee);
+      const result = await sut.update(request);
+      expect(result.status).toBe(200);
+      expect(result.body).toHaveProperty('name', 'Carlos Eduardo');
+    });
+
+    test('should return BadRequestError when employeeId is missing', async () => {
+      const invalidRequest = {params: {}, body: {}};
+      const result = await sut.update(invalidRequest);
+      expect(result.status).toBe(400);
+      expect(result.body).toHaveProperty('message', 'param [employeeId] is missing');
+    });
+
+    test('should return with status 500 when DataBase fails', async () => {
+      mockUpdateEmployeeUseCase.mockRejectedValue(new DataBaseError());
+      const result = await sut.update(request);
+      expect(result.status).toBe(500);
+    });
+
+  })
+
   describe("#delete", () => {
     const request: HttpRequest = {
       body: {},
@@ -222,6 +261,13 @@ describe("EmployeeControllerHttpAdapter", () => {
       expect(result.status).toBe(200);
       expect(result.body).toHaveProperty('message', 'ok');
     });
+
+    test('should return BadRequestError when employeeId is missing', async () => {
+      const invalidRequest = {params: {}, body: {}};
+      const result = await sut.delete(invalidRequest);
+      expect(result.status).toBe(400);
+      expect(result.body).toHaveProperty('message', 'param [employeeId] is missing');
+    })
 
     test('should return with status 500 when DataBase fails', async () => {
       mockDeleteEmployeeUseCase.mockRejectedValue(new DataBaseError());

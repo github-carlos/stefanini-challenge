@@ -3,17 +3,17 @@ import { HttpResponse } from "../ports";
 
 export class HttpErrorHandler {
   static handle(error: Error): HttpResponse {
-    console.log('Error log', error);
-    let status = 500;
+    let status: number;
     let message = error.message;
-    if (error instanceof BadRequestError) {
-      status = 400;
-    }
-    if (error instanceof NotFoundError) {
-      status = 404;
-    }
-    if (error instanceof ServerError) {
-      status = 500;
+    switch(error.name) {
+      case 'BadRequestError':
+        status = 400;
+        break;
+      case 'NotFoundError':
+        status = 404;
+        break;
+      default:
+        status = 500;
     }
     return {status, body: {message}};
   }
